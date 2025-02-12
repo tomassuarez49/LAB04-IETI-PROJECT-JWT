@@ -1,4 +1,4 @@
-package com.edu.eci.ieti.controller;
+package com.edu.eci.ieti.controller.health;
 
 import lombok.Getter;
 import lombok.Setter;

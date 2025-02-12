@@ -1,4 +1,4 @@
-package com.edu.eci.ieti.controller;
+package com.edu.eci.ieti.controller.health;
 
 import java.util.List;
 import java.util.Optional;

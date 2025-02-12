@@ -1,4 +1,4 @@
-package com.edu.eci.ieti.controller;
+package com.edu.eci.ieti.controller.health;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +28,7 @@ public class AuthenticationController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest request) {
+    public com.edu.eci.ieti.controller.health.AuthResponse login(@RequestBody AuthRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
@@ -39,11 +39,11 @@ public class AuthenticationController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String token = jwtUtil.generateToken(userDetails);
 
-        return new AuthResponse(token);
+        return new com.edu.eci.ieti.controller.health.AuthResponse(token);
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
+    public String register(@RequestBody com.edu.eci.ieti.controller.health.RegisterRequest request) {
         user newUser = new user();
         newUser.setName(request.getUsername());
         newUser.setEmail(request.getUsername()); // Suponiendo que el email es el username
