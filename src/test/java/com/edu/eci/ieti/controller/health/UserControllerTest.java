@@ -26,7 +26,7 @@ import com.edu.eci.ieti.service.userService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-@Import(UserRepositoryTestConfig.class)
+@Import({UserRepositoryTestConfig.class})
 @WebMvcTest(userController.class)  // Configura el test para probar solo el controlador
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {

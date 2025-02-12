@@ -6,7 +6,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class AuthResponse {
-    private String jwt;
+    private String token;
+
+    public AuthResponse(String token) {
+        this.token = token;
+    }
+
+    public String getToken() { return token; }
 }
+
+

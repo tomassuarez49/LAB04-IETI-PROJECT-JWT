@@ -1,14 +1,14 @@
 package com.edu.eci.ieti.controller.health;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.edu.eci.ieti.repository.user;
 import com.edu.eci.ieti.security.JWTUtil;
@@ -28,27 +28,32 @@ public class AuthenticationController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public com.edu.eci.ieti.controller.health.AuthResponse login(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        } catch (Exception e) {
-            throw new RuntimeException("Credenciales inválidas", e);
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String token = jwtUtil.generateToken(userDetails);
 
-        return new com.edu.eci.ieti.controller.health.AuthResponse(token);
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody com.edu.eci.ieti.controller.health.RegisterRequest request) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        if (userService.findById(request.getUsername()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario ya existe");
+        }
+
         user newUser = new user();
         newUser.setName(request.getUsername());
-        newUser.setEmail(request.getUsername()); // Suponiendo que el email es el username
-        newUser.setPassword(passwordEncoder.encode(request.getPassword())); // Deberías encriptarlo antes de guardarlo
+        newUser.setEmail(request.getUsername());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
         userService.save(newUser);
-        return "Usuario registrado exitosamente";
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado exitosamente");
     }
 }
